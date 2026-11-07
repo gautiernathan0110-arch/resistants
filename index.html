@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16120d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Ombres sur Lyon — 1943</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#241b12;--paper:#efe4c8;--paper2:#e2d3ae;--red:#9b2318;--green:#2f5d3a;--muted:#6b5a44;--gold:#d9a441}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#16120d;color:var(--ink);font-family:'Special Elite','Courier New',monospace}
+body{min-height:100vh;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;min-height:100vh;background:var(--paper);
+  background-image:radial-gradient(circle at 20% 10%,rgba(255,255,255,.35),transparent 60%),radial-gradient(circle at 90% 90%,rgba(120,90,50,.18),transparent 55%);
+  padding:16px 16px calc(40px + env(safe-area-inset-bottom))}
+h1{font-size:2.1rem;letter-spacing:.08em;margin:.4em 0 0;text-align:center;line-height:1.1}
+h2{font-size:1.3rem;margin:.6em 0 .3em}
+.sub{text-align:center;color:var(--muted);margin:.3em 0 1em}
+p{line-height:1.45;margin:.5em 0}
+small,.muted{color:var(--muted)}
+button{font-family:inherit;font-size:1.05rem;border:2px solid var(--ink);background:var(--paper2);color:var(--ink);
+  padding:14px 16px;border-radius:6px;width:100%;margin:6px 0;cursor:pointer;touch-action:manipulation}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--ink);color:var(--paper)}
+button.danger{background:var(--red);color:#fff;border-color:var(--red)}
+button.sel{background:var(--gold)}
+button.link{background:none;border:none;text-decoration:underline;padding:8px;color:var(--muted)}
+button:disabled{opacity:.45}
+input{font-family:inherit;font-size:1.15rem;width:100%;padding:12px;border:2px solid var(--ink);border-radius:6px;background:#fbf5e4;margin:6px 0}
+.card{border:2px dashed var(--muted);padding:14px;border-radius:6px;margin:12px 0;background:rgba(255,255,255,.25)}
+.card.red{border-color:var(--red)}
+.stamp{display:inline-block;border:3px solid var(--red);color:var(--red);padding:2px 10px;transform:rotate(-4deg);font-weight:bold;letter-spacing:.1em}
+.center{text-align:center}
+.err{color:var(--red);font-weight:bold}
+.status{background:var(--ink);color:var(--paper);padding:8px 10px;border-radius:4px;margin:8px 0;text-align:center;font-size:.9rem}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top .chip{border:2px solid var(--ink);border-radius:20px;padding:4px 10px;font-size:.85rem;background:var(--paper2);width:auto;margin:0}
+.timer{font-size:1.5rem;font-weight:bold;min-width:3.2em;text-align:right}
+.barlbl{font-size:.85rem;margin-top:8px}
+.bar{position:relative;height:18px;border:2px solid var(--ink);border-radius:4px;margin:4px 0 12px;background:var(--paper2);overflow:hidden}
+.fill{position:absolute;top:0;bottom:0;left:0;background:var(--green);transition:width .5s}
+.code{font-size:2.6rem;letter-spacing:.25em;text-align:center;margin:.1em 0}
+ul.plist{list-style:none;padding:0;margin:8px 0}
+ul.plist li{padding:9px 10px;border-bottom:1px dotted var(--muted);display:flex;justify-content:space-between;gap:8px}
+.tag{font-size:.8rem;padding:1px 6px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.tag.a{color:var(--red)} .tag.r{color:var(--green)} .tag.off{color:var(--muted)}
+.gone{opacity:.5;text-decoration:line-through}
+.task{border:2px solid var(--ink);padding:12px;border-radius:6px;background:#f8f0dc;margin:10px 0}
+.task h3{margin:0 0 4px;font-size:1.15rem}
+.task .desc{font-size:.9rem;color:var(--muted);margin-bottom:10px}
+.task.ok{border-color:var(--green)}
+.done{font-size:1.4rem;color:var(--green);text-align:center;padding:24px 0}
+.morse{font-size:2.2rem;text-align:center;letter-spacing:.15em;min-height:1.4em;margin:6px 0}
+.morse.input{color:var(--green);border-bottom:2px dashed var(--muted)}
+.quote{text-align:center;font-style:italic;margin:4px 0 8px}
+.row{display:flex;gap:8px}
+.row button{flex:1}
+.big{font-size:2rem;padding:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid3 button{margin:0;height:64px;font-size:1.5rem;padding:0}
+.cell.lit{background:var(--gold)}
+.cell.hit{background:#b9cfa9}
+.wire{height:46px;border-radius:23px;color:#fff;text-shadow:0 0 3px #000;border-color:#000}
+.wire.cut{opacity:.25}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid #000;vertical-align:middle;margin:0 3px}
+.doc{border:2px solid var(--muted);background:#fffaf0;padding:10px;text-align:center;margin-bottom:8px}
+.doc .sym{font-size:2.4rem}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+.rolecard{text-align:center;padding:22px 14px;border:3px double var(--ink);border-radius:8px;margin:14px 0;background:#f8f0dc}
+.rolecard .ico{font-size:3.2rem}
+.rolecard.agent{border-color:var(--red)}
+.secret{border:2px solid var(--red);border-radius:6px;padding:10px;margin-top:16px;background:rgba(155,35,24,.07)}
+.banner{text-align:center;font-size:1.6rem;padding:18px 8px;border:3px double var(--ink);margin:12px 0}
+.banner.r{color:var(--green);border-color:var(--green)}
+.banner.a{color:var(--red);border-color:var(--red)}
+details{margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<!-- ================= MOTEUR DU JEU (exécuté par l'hôte) ================= -->
+<script id="engine">
+const CFG = {
+  MIN_PLAYERS: 4,
+  MAX_PLAYERS: 15,
+  MISSION_MS: 75000,    // durée de la nuit (missions)
+  MEETING_MS: 120000,   // durée de la réunion (discussion + vote)
+  RESULT_MS: 9000,      // affichage du résultat du vote
+  TASKS_PER_NIGHT: 3,   // missions par joueur et par nuit
+  PRISON_TASKS: 1,      // missions pour un résistant arrêté / exclu
+  TASK_UNITS: 7,        // missions nécessaires par résistant pour atteindre 100 %
+  SABOTAGE: 8           // points de progression détruits par un sabotage
+};
+
+/* Composition équilibrée selon le nombre de joueurs.
+   Côté Résistance : médecin (protège), opérateur radio (enquête), chef de réseau (vote double).
+   Côté Gestapo : agents, dont un « mouchard » qui passe pour résistant aux écoutes radio. */
+const COMPOSITIONS = {
+  //   agents, mouchard, médecin, radio, chef, missions nécessaires par résistant
+  4:  [1, 0, 1, 1, 0, 5],
+  5:  [1, 0, 1, 1, 0, 7],
+  6:  [1, 0, 1, 0, 1, 7],
+  7:  [2, 0, 1, 1, 1, 6],
+  8:  [2, 0, 1, 1, 1, 7],
+  9:  [2, 1, 1, 1, 1, 7],
+  10: [3, 0, 1, 1, 1, 6],
+  11: [3, 0, 1, 1, 1, 7],
+  12: [3, 1, 1, 1, 1, 7],
+  13: [3, 1, 1, 0, 1, 7],
+  14: [4, 0, 1, 1, 1, 7],
+  15: [4, 1, 1, 1, 1, 7]
+};
+function composition(n){
+  n = Math.max(CFG.MIN_PLAYERS, Math.min(CFG.MAX_PLAYERS, n));
+  const [agents, mouchard, medecin, radio, chef, units] = COMPOSITIONS[n];
+  return { n, agents, mouchard, medecin, radio, chef, units, resistants: n - agents, simples: n - agents - medecin - radio - chef };
+}
+function agentCount(n){ return composition(n).agents; }
+function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function newGame(hostId){
+  return { hostId, phase: 'lobby', round: 0, players: [], progress: 0, endsAt: 0, target: 6,
+    report: null, result: null, winner: null, winReason: null,
+    arrest: null, votes: {}, sabotages: 0, progressAtStart: 0 };
+}
+function findP(g, id){ return g.players.find(p => p.id === id); }
+
+function setTarget(g, n){
+  if (g.phase !== 'lobby') return false;
+  n = Math.round(Number(n));
+  if (!(n >= CFG.MIN_PLAYERS && n <= CFG.MAX_PLAYERS) || n < g.players.length) return false;
+  g.target = n; return true;
+}
+
+function addPlayer(g, id, name){
+  const p = findP(g, id);
+  if (p){ if (name) p.name = name; p.connected = true; return true; }
+  if (g.phase !== 'lobby' || g.players.length >= (g.target || CFG.MAX_PLAYERS)) return false;
+  g.players.push({ id, name, role: null, special: null, status: 'free', tasksDone: 0, sabotaged: false, connected: true });
+  return true;
+}
+function removePlayer(g, id){ g.players = g.players.filter(p => p.id !== id); }
+
+function startGame(g, now){
+  if (g.phase !== 'lobby' && g.phase !== 'end') return false;
+  if (g.players.length < CFG.MIN_PLAYERS) return false;
+  if (g.target && g.players.length !== g.target) return false;
+  const c = composition(g.players.length);
+  const order = shuffle(g.players);
+  const agents = order.slice(0, c.agents), res = order.slice(c.agents);
+  g.players.forEach(p => { p.status = 'free'; p.special = null; p.intel = []; p.lastProtect = null; });
+  agents.forEach((p, i) => { p.role = 'agent'; if (i === 0 && c.mouchard) p.special = 'mouchard'; });
+  res.forEach(p => { p.role = 'resistant'; });
+  let i = 0;
+  if (c.medecin) res[i++].special = 'medecin';
+  if (c.radio) res[i++].special = 'radio';
+  if (c.chef) res[i++].special = 'chef';
+  g.progress = 0; g.round = 1; g.winner = null; g.winReason = null;
+  startMission(g, now);
+  return true;
+}
+
+function startMission(g, now){
+  g.phase = 'mission'; g.endsAt = now + CFG.MISSION_MS;
+  g.players.forEach(p => { p.tasksDone = 0; p.sabotaged = false; p.protect = null; p.inspected = false; });
+  g.arrest = null; g.votes = {}; g.sabotages = 0; g.progressAtStart = g.progress;
+  g.report = null; g.result = null;
+}
+
+function taskLimit(p){
+  if (p.status === 'free') return CFG.TASKS_PER_NIGHT;
+  return p.role === 'resistant' ? CFG.PRISON_TASKS : 0;
+}
+function nRes(g){ return Math.max(1, g.players.filter(p => p.role === 'resistant').length); }
+
+function doTask(g, id, now){
+  const p = findP(g, id);
+  if (!p || g.phase !== 'mission' || p.tasksDone >= taskLimit(p)) return false;
+  p.tasksDone++;
+  if (p.role === 'resistant'){
+    g.progress = Math.min(100, g.progress + 100 / (nRes(g) * (composition(g.players.length).units || CFG.TASK_UNITS)));
+    if (g.progress >= 99.999){ g.progress = 100; endGame(g, 'resistance', 'progress'); }
+  }
+  return true;
+}
+
+function sabotage(g, id){
+  const p = findP(g, id);
+  if (!p || g.phase !== 'mission' || p.role !== 'agent' || p.status !== 'free' || p.sabotaged) return false;
+  p.sabotaged = true; g.sabotages++;
+  g.progress = Math.max(0, g.progress - CFG.SABOTAGE);
+  return true;
+}
+
+function denounce(g, id, target){
+  const p = findP(g, id), t = findP(g, target);
+  if (!p || !t || g.phase !== 'mission' || g.arrest) return false;
+  if (p.role !== 'agent' || p.status !== 'free') return false;
+  if (t.role !== 'resistant' || t.status !== 'free') return false;
+  g.arrest = { target, by: id };
+  return true;
+}
+
+// Médecin : protège un joueur libre de l'arrestation cette nuit (pas le même deux nuits de suite)
+function protect(g, id, target){
+  const p = findP(g, id), t = findP(g, target);
+  if (!p || !t || g.phase !== 'mission' || p.special !== 'medecin' || p.status !== 'free' || p.protect) return false;
+  if (t.status !== 'free' || p.lastProtect === target) return false;
+  p.protect = target; return true;
+}
+
+// Opérateur radio : intercepte les communications d'un joueur (le mouchard passe pour résistant)
+function inspect(g, id, target){
+  const p = findP(g, id), t = findP(g, target);
+  if (!p || !t || g.phase !== 'mission' || p.special !== 'radio' || p.status !== 'free' || p.inspected) return false;
+  if (t.status !== 'free' || t.id === id) return false;
+  p.inspected = true;
+  p.intel = (p.intel || []).concat([{ round: g.round, target, result: (t.role === 'agent' && t.special !== 'mouchard') ? 'agent' : 'resistant' }]);
+  return true;
+}
+
+function endMission(g, now){
+  let arrested = null, foiled = false;
+  const medic = g.players.find(p => p.special === 'medecin' && p.status === 'free');
+  if (g.arrest){
+    const t = findP(g, g.arrest.target);
+    if (medic && medic.protect === g.arrest.target) foiled = true;
+    else if (t && t.status === 'free'){ t.status = 'arrested'; arrested = t.id; }
+  }
+  g.players.forEach(p => { if (p.special === 'medecin') p.lastProtect = p.protect || null; });
+  g.report = { arrested, foiled, sabotages: g.sabotages, delta: Math.round((g.progress - g.progressAtStart) * 10) / 10 };
+  if (checkWin(g)) return;
+  g.phase = 'meeting'; g.endsAt = now + CFG.MEETING_MS; g.votes = {};
+}
+
+function castVote(g, id, target, now){
+  const p = findP(g, id);
+  if (!p || g.phase !== 'meeting' || p.status !== 'free') return false;
+  if (target !== 'skip'){ const t = findP(g, target); if (!t || t.status !== 'free') return false; }
+  g.votes[id] = target;
+  const free = g.players.filter(x => x.status === 'free');
+  if (free.every(x => Object.prototype.hasOwnProperty.call(g.votes, x.id))) endMeeting(g, now);
+  return true;
+}
+
+function endMeeting(g, now){
+  const tally = {};
+  for (const [v, t] of Object.entries(g.votes)){
+    const vp = findP(g, v);
+    if (vp && vp.status === 'free') tally[t] = (tally[t] || 0) + (vp.special === 'chef' ? 2 : 1);
+  }
+  let best = null, bestN = 0, tie = false;
+  for (const [t, n] of Object.entries(tally)){
+    if (n > bestN){ best = t; bestN = n; tie = false; }
+    else if (n === bestN) tie = true;
+  }
+  let excluded = null;
+  if (best && !tie && best !== 'skip'){
+    const t = findP(g, best);
+    if (t && t.status === 'free'){ t.status = 'excluded'; excluded = { id: t.id, role: t.role }; }
+  }
+  g.result = { excluded, tally };
+  if (checkWin(g)) return;
+  g.phase = 'result'; g.endsAt = now + CFG.RESULT_MS;
+}
+
+function checkWin(g){
+  const free = g.players.filter(p => p.status === 'free');
+  const a = free.filter(p => p.role === 'agent').length, r = free.length - a;
+  if (g.progress >= 100){ endGame(g, 'resistance', 'progress'); return true; }
+  if (a === 0){ endGame(g, 'resistance', 'agents'); return true; }
+  if (a >= r){ endGame(g, 'gestapo', 'numbers'); return true; }
+  return false;
+}
+function endGame(g, winner, why){ g.phase = 'end'; g.winner = winner; g.winReason = why; g.endsAt = 0; }
+
+function advance(g, now){
+  if (g.phase === 'mission') endMission(g, now);
+  else if (g.phase === 'meeting') endMeeting(g, now);
+  else if (g.phase === 'result'){ g.round++; startMission(g, now); }
+}
+function tick(g, now){
+  if (g.endsAt && now >= g.endsAt && (g.phase === 'mission' || g.phase === 'meeting' || g.phase === 'result')){
+    advance(g, now); return true;
+  }
+  return false;
+}
+function resetToLobby(g, keep){
+  g.players = g.players.filter(p => keep(p.id));
+  g.players.forEach(p => { p.role = null; p.special = null; p.intel = []; p.status = 'free'; p.tasksDone = 0; p.sabotaged = false; });
+  g.target = Math.max(CFG.MIN_PLAYERS, g.target || 6, g.players.length);
+  Object.assign(g, { phase: 'lobby', round: 0, progress: 0, endsAt: 0, report: null, result: null,
+    winner: null, winReason: null, arrest: null, votes: {}, sabotages: 0 });
+}
+
+// Ce que voit un joueur précis (les rôles secrets ne sont jamais envoyés aux autres)
+function viewFor(g, id, now){
+  const me = findP(g, id);
+  const iAmAgent = !!me && me.role === 'agent';
+  const visible = p => g.phase === 'end' || p.status === 'excluded' || p.id === id || (iAmAgent && p.role === 'agent');
+  return {
+    hostId: g.hostId, phase: g.phase, round: g.round,
+    progress: Math.round(g.progress * 10) / 10,
+    endsIn: g.endsAt ? Math.max(0, g.endsAt - now) : 0,
+    players: g.players.map(p => ({
+      id: p.id, name: p.name, status: p.status, connected: p.connected,
+      voted: g.phase === 'meeting' && Object.prototype.hasOwnProperty.call(g.votes, p.id),
+      role: visible(p) ? p.role : null,
+      special: visible(p) ? (p.special || null) : null
+    })),
+    report: g.report, result: g.result, winner: g.winner, winReason: g.winReason,
+    minPlayers: CFG.MIN_PLAYERS, maxPlayers: CFG.MAX_PLAYERS, target: g.target,
+    comp: composition(g.phase === 'lobby' ? (g.target || g.players.length) : g.players.length),
+    me: me ? {
+      id, role: me.role, special: me.special || null, status: me.status, tasksDone: me.tasksDone,
+      taskLimit: g.phase === 'mission' ? taskLimit(me) : 0,
+      sabotaged: me.sabotaged, arrest: iAmAgent ? g.arrest : null,
+      protect: me.protect || null, lastProtect: me.lastProtect || null,
+      inspected: !!me.inspected, intel: me.intel || [],
+      vote: Object.prototype.hasOwnProperty.call(g.votes, id) ? g.votes[id] : null
+    } : null
+  };
+}
+if (typeof module !== 'undefined') module.exports = { CFG, composition, newGame, setTarget, addPlayer, removePlayer, startGame, doTask, sabotage, denounce, protect, inspect, castVote, advance, tick, resetToLobby, viewFor, findP };
+</script>
+
+<!-- ================= INTERFACE + RÉSEAU ================= -->
+<script>
+const PREFIX = 'ombres-lyon-v1-';
+const S = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+function rid(n){ const c = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; for (let i = 0; i < n; i++) s += c[Math.floor(Math.random() * c.length)]; return s; }
+function genCode(){ const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; let s = ''; for (let i = 0; i < 4; i++) s += c[Math.floor(Math.random() * c.length)]; return s; }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+function cleanName(s){ return String(s || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 16); }
+
+let myId = S.get('ol_id'); if (!myId){ myId = rid(12); S.set('ol_id', myId); }
+let myName = S.get('ol_name') || '';
+const urlCode = (new URLSearchParams(location.search).get('partie') || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+
+const app = {
+  screen: 'home', mode: null, code: urlCode || null, peer: null, conns: new Map(), hostConn: null,
+  G: null, view: null, viewAt: 0, status: '', error: '', refused: null,
+  roleSeen: false, roleOpen: false, secretOpen: false, task: null, localDone: 0, phaseKey: ''
+};
+const $app = document.getElementById('app');
+
+/* ---------- Réseau : hôte ---------- */
+function cleanupPeer(){
+  if (app.peer){ try { app.peer.destroy(); } catch(e){} }
+  app.peer = null; app.conns = new Map(); app.hostConn = null;
+}
+
+function hostCreate(code, restored, attempt){
+  attempt = attempt || 0;
+  cleanupPeer();
+  app.mode = 'host'; app.code = code; app.screen = 'game'; app.status = 'Ouverture de la partie…'; render();
+  const peer = new Peer(PREFIX + code.toLowerCase());
+  app.peer = peer;
+  let opened = false;
+  peer.on('open', () => {
+    opened = true;
+    app.G = restored || newGame(myId);
+    app.G.hostId = myId;
+    addPlayer(app.G, myId, myName);
+    app.G.players.forEach(p => { if (p.id !== myId) p.connected = false; });
+    if (app.G.phase === 'lobby') app.G.players = app.G.players.filter(p => p.id === myId);
+    S.set('ol_hostcode', code);
+    history.replaceState(null, '', '?partie=' + code);
+    app.status = '';
+    sync();
+  });
+  peer.on('connection', conn => {
+    conn.on('data', d => onHostData(conn, d));
+    conn.on('close', () => onConnClose(conn));
+    conn.on('error', () => onConnClose(conn));
+  });
+  peer.on('disconnected', () => { setTimeout(() => { if (app.peer === peer && !peer.destroyed) try { peer.reconnect(); } catch(e){} }, 1500); });
+  peer.on('error', e => {
+    if (app.peer !== peer) return;
+    if (e.type === 'unavailable-id' && !opened){
+      if (restored && attempt < 12){ app.status = 'Reprise de la partie ' + code + '…'; render(); setTimeout(() => hostCreate(code, restored, attempt + 1), 3000); }
+      else hostCreate(genCode());
+    } else if (!opened){
+      app.error = 'Connexion impossible (' + e.type + '). Vérifiez votre connexion Internet.';
+      app.screen = 'home'; app.mode = null; app.status = ''; render();
+    }
+  });
+}
+
+function onHostData(conn, d){
+  const G = app.G;
+  if (!G || !d || typeof d !== 'object') return;
+  if (d.t === 'hello'){
+    const id = String(d.id || '').slice(0, 20), name = cleanName(d.name) || 'Anonyme';
+    if (!id || id === myId) return;
+    if (!addPlayer(G, id, name)){
+      try { conn.send({ t: 'refused', reason: G.phase === 'lobby' ? 'La partie est complète (' + G.target + ' joueurs). Demandez à l’hôte d’augmenter le nombre de places.' : 'La partie a déjà commencé. Attendez la prochaine.' }); } catch(e){}
+      return;
+    }
+    const old = app.conns.get(id);
+    if (old && old !== conn){ old._replaced = true; try { old.close(); } catch(e){} }
+    conn._pid = id; app.conns.set(id, conn);
+    sync(); return;
+  }
+  if (conn._pid) act(conn._pid, d);
+}
+
+function onConnClose(conn){
+  if (conn._replaced || !conn._pid) return;
+  const id = conn._pid;
+  if (app.conns.get(id) !== conn) return;
+  app.conns.delete(id);
+  const G = app.G; if (!G) return;
+  const p = findP(G, id); if (!p) return;
+  if (G.phase === 'lobby') removePlayer(G, id); else p.connected = false;
+  sync();
+}
+
+function act(pid, d){
+  const G = app.G, now = Date.now(); let changed = false;
+  if (!G) return;
+  if (d.t === 'task') changed = doTask(G, pid, now);
+  else if (d.t === 'sabotage') changed = sabotage(G, pid);
+  else if (d.t === 'denounce') changed = denounce(G, pid, String(d.target));
+  else if (d.t === 'vote') changed = castVote(G, pid, String(d.target), now);
+  else if (d.t === 'protect') changed = protect(G, pid, String(d.target));
+  else if (d.t === 'inspect') changed = inspect(G, pid, String(d.target));
+  if (changed) sync();
+}
+
+function hostCmd(cmd, arg){
+  const G = app.G, now = Date.now(); if (!G) return;
+  if (cmd === 'target') setTarget(G, arg);
+  else if (cmd === 'start') startGame(G, now);
+  else if (cmd === 'skip') advance(G, now);
+  else if (cmd === 'again') resetToLobby(G, id => id === myId || app.conns.has(id));
+  sync();
+}
+
+function sync(){
+  if (app.mode !== 'host' || !app.G) return;
+  const now = Date.now();
+  S.set('ol_game_' + app.code, JSON.stringify(app.G));
+  for (const [id, conn] of app.conns){
+    if (conn.open){ try { conn.send({ t: 'state', v: viewFor(app.G, id, now) }); } catch(e){} }
+  }
+  setView(viewFor(app.G, myId, now));
+}
+
+/* ---------- Réseau : joueur ---------- */
+let reconTimer = null;
+function clientJoin(code){
+  cleanupPeer();
+  app.mode = 'client'; app.code = code; app.screen = 'game'; app.refused = null;
+  app.status = 'Connexion à la partie ' + code + '…'; render();
+  const peer = new Peer();
+  app.peer = peer;
+  peer.on('open', () => connectHost());
+  peer.on('disconnected', () => { setTimeout(() => { if (app.peer === peer && !peer.destroyed) try { peer.reconnect(); } catch(e){} }, 1500); });
+  peer.on('error', e => {
+    if (app.peer !== peer) return;
+    if (e.type === 'peer-unavailable') app.status = 'Partie ' + code + ' introuvable pour l’instant… nouvelle tentative.';
+    else app.status = 'Problème réseau (' + e.type + ')… nouvelle tentative.';
+    render(); scheduleReconnect(4000);
+  });
+}
+function scheduleReconnect(ms){
+  clearTimeout(reconTimer);
+  reconTimer = setTimeout(() => {
+    if (app.mode !== 'client' || app.refused) return;
+    if (!app.peer || app.peer.destroyed){ clientJoin(app.code); return; }
+    if (app.peer.disconnected){ try { app.peer.reconnect(); } catch(e){} scheduleReconnect(3000); return; }
+    connectHost();
+  }, ms);
+}
+function connectHost(){
+  if (app.hostConn && app.hostConn.open) return;
+  const c = app.peer.connect(PREFIX + app.code.toLowerCase(), { reliable: true });
+  const to = setTimeout(() => { if (!c.open){ try { c.close(); } catch(e){} scheduleReconnect(500); } }, 10000);
+  c.on('open', () => {
+    clearTimeout(to); app.hostConn = c; app.status = '';
+    c.send({ t: 'hello', id: myId, name: myName });
+    render();
+  });
+  c.on('data', d => {
+    if (!d) return;
+    if (d.t === 'state') setView(d.v);
+    else if (d.t === 'refused'){ app.refused = d.reason; render(); }
+  });
+  c.on('close', () => {
+    clearTimeout(to);
+    if (app.hostConn === c) app.hostConn = null;
+    if (!app.refused){ app.status = 'Connexion perdue… reconnexion en cours.'; render(); scheduleReconnect(2000); }
+  });
+  c.on('error', () => {});
+}
+
+function send(action){
+  if (app.mode === 'host') act(myId, action);
+  else if (app.hostConn && app.hostConn.open) app.hostConn.send(action);
+  else { app.status = 'Hors ligne : action non envoyée.'; render(); }
+}
+
+/* ---------- État reçu ---------- */
+function setView(v){
+  app.view = v; app.viewAt = Date.now();
+  const key = v.phase + ':' + v.round;
+  if (key !== app.phaseKey){
+    const first = !app.phaseKey;
+    app.phaseKey = key; app.task = null; app.localDone = 0; app.secretOpen = false; app.roleOpen = false;
+    if (v.phase === 'lobby') app.roleSeen = false;
+    if (v.phase === 'mission' && v.round === 1 && !first) app.roleSeen = false;
+    if (!first && navigator.vibrate) try { navigator.vibrate(v.phase === 'meeting' ? [200, 100, 200] : 120); } catch(e){}
+  }
+  render();
+}
+
+/* ---------- Mini-missions ---------- */
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function wrap(title, desc){ const w = el('div', 'task'); w.append(el('h3', null, title), el('div', 'desc', desc)); return w; }
+function shake(w){ w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake'); if (navigator.vibrate) try { navigator.vibrate(60); } catch(e){} }
+function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+
+const BBC = ['« Jean a de longues moustaches »', '« Les carottes sont cuites »', '« Il fait chaud à Suez »',
+  '« Les dés sont sur le tapis »', '« La flèche ne percera pas »', '« Le chat a neuf vies »'];
+
+const TASKS = {
+  radio(done){
+    const w = wrap('📻 Radio Londres', 'Un message personnel arrive de la BBC. Recopiez le code transmis.');
+    const seq = Array.from({ length: 5 }, () => Math.random() < .5 ? '·' : '—');
+    const inp = el('div', 'morse input', '');
+    let pos = 0;
+    const row = el('div', 'row');
+    ['·', '—'].forEach(s => {
+      const b = el('button', 'big', s);
+      b.onclick = () => {
+        if (s === seq[pos]){ pos++; inp.textContent = seq.slice(0, pos).join(' '); if (pos === seq.length) done(w); }
+        else { pos = 0; inp.textContent = ''; shake(w); }
+      };
+      row.append(b);
+    });
+    w.append(el('div', 'quote', pick(BBC)), el('div', 'morse', seq.join(' ')), inp, row);
+    return w;
+  },
+  tracts(done){
+    const w = wrap('🖨️ Imprimerie clandestine', 'Imprimez 12 tracts pour le journal du réseau.');
+    let n = 0; const N = 12;
+    const c = el('div', 'morse', '0 / ' + N);
+    const b = el('button', 'big primary', 'Imprimer');
+    b.onclick = () => { n++; c.textContent = n + ' / ' + N; if (n >= N) done(w); };
+    w.append(c, b);
+    return w;
+  },
+  traboules(done){
+    const w = wrap('🚪 Traboules du Vieux-Lyon', 'Mémorisez le passage secret, puis refaites-le pour semer la patrouille.');
+    const seq = shuffle([0,1,2,3,4,5,6,7,8]).slice(0, 4);
+    const grid = el('div', 'grid3'); const cells = [];
+    let pos = 0, playing = false;
+    for (let i = 0; i < 9; i++){
+      const b = el('button', 'cell', '');
+      b.onclick = () => {
+        if (playing) return;
+        if (i === seq[pos]){ b.classList.add('hit'); pos++; if (pos === seq.length) done(w); }
+        else { shake(w); replay(); }
+      };
+      cells.push(b); grid.append(b);
+    }
+    const info = el('p', 'center muted', 'Observez…');
+    const again = el('button', 'link', 'Revoir le passage');
+    again.onclick = () => replay();
+    function replay(){
+      playing = true; pos = 0; info.textContent = 'Observez…';
+      cells.forEach(c => c.classList.remove('hit', 'lit'));
+      seq.forEach((idx, k) => {
+        setTimeout(() => cells[idx].classList.add('lit'), 400 + k * 650);
+        setTimeout(() => cells[idx].classList.remove('lit'), 400 + k * 650 + 480);
+      });
+      setTimeout(() => { playing = false; info.textContent = 'À vous : touchez les portes dans l’ordre.'; }, 400 + seq.length * 650);
+    }
+    w.append(info, grid, again);
+    setTimeout(replay, 300);
+    return w;
+  },
+  papiers(done){
+    const w = wrap('🪪 Faux papiers', 'Apposez le bon tampon sur chaque document (3 documents).');
+    const SY = ['⚜', '★', '✚', '◆', '✿', '▲'];
+    const NOMS = ['Jean Moreau', 'Lucie Bernard', 'Paul Garnier', 'Marie Rivière', 'Henri Blanc', 'Simone Perrin', 'Louis Fabre'];
+    let n = 0;
+    const box = el('div');
+    function step(){
+      box.innerHTML = '';
+      const target = pick(SY);
+      const doc = el('div', 'doc');
+      doc.append(el('div', null, 'Carte d’identité — ' + pick(NOMS)), el('div', 'muted', 'Tampon requis :'), el('div', 'sym', target));
+      const opts = shuffle([target].concat(shuffle(SY.filter(s => s !== target)).slice(0, 3)));
+      const row = el('div', 'row');
+      opts.forEach(s => {
+        const b = el('button', 'big', s);
+        b.onclick = () => { if (s === target){ n++; if (n >= 3) done(w); else step(); } else shake(w); };
+        row.append(b);
+      });
+      box.append(el('div', 'muted center', 'Document ' + (n + 1) + ' / 3'), doc, row);
+    }
+    step(); w.append(box);
+    return w;
+  },
+  fils(done){
+    const w = wrap('✂️ Ligne téléphonique', 'Coupez les fils dans l’ordre indiqué pour isoler la Kommandantur.');
+    const COLS = [['rouge', '#b3261e'], ['bleu', '#1f4e9b'], ['jaune', '#c9a227'], ['vert', '#2e7d32'], ['noir', '#222']];
+    const order = shuffle(COLS).slice(0, 4);
+    const lbl = el('p', 'center');
+    lbl.innerHTML = 'Ordre : ' + order.map((c, i) => '<span class="dot" style="background:' + c[1] + '"></span>' + (i + 1)).join(' ');
+    let pos = 0; const btns = [];
+    const box = el('div');
+    shuffle(order).forEach(c => {
+      const b = el('button', 'wire', c[0]);
+      b.style.background = c[1];
+      b.onclick = () => {
+        if (b.classList.contains('cut')) return;
+        if (c === order[pos]){ b.classList.add('cut'); b.textContent = '✂ ' + c[0]; pos++; if (pos === order.length) done(w); }
+        else { shake(w); pos = 0; btns.forEach(x => { x.classList.remove('cut'); x.textContent = x._name; }); }
+      };
+      b._name = c[0]; btns.push(b); box.append(b);
+    });
+    w.append(lbl, box);
+    return w;
+  },
+  code(done){
+    const w = wrap('🔢 Code de la planque', 'Mémorisez le code de la porte, puis tapez-le.');
+    let code = '', typed = '';
+    const disp = el('div', 'morse', '');
+    const pad = el('div', 'grid3');
+    let locked = true;
+    function show(){
+      code = String(Math.floor(1000 + Math.random() * 9000)); typed = ''; locked = true;
+      disp.textContent = code;
+      setTimeout(() => { disp.textContent = '_ _ _ _'; locked = false; }, 2200);
+    }
+    ['1','2','3','4','5','6','7','8','9','↺','0','⌫'].forEach(k => {
+      const b = el('button', null, k);
+      b.onclick = () => {
+        if (k === '↺'){ show(); return; }
+        if (locked) return;
+        if (k === '⌫'){ typed = typed.slice(0, -1); }
+        else typed += k;
+        disp.textContent = (typed + '____').slice(0, 4).split('').join(' ');
+        if (typed.length === 4){
+          if (typed === code) done(w);
+          else { shake(w); typed = ''; setTimeout(() => { disp.textContent = '_ _ _ _'; }, 300); }
+        }
+      };
+      pad.append(b);
+    });
+    w.append(disp, pad);
+    show();
+    return w;
+  }
+};
+let lastTaskType = null;
+function makeTask(){
+  const types = Object.keys(TASKS);
+  let t; do { t = pick(types); } while (t === lastTaskType);
+  lastTaskType = t;
+  return TASKS[t](onTaskDone);
+}
+function onTaskDone(w){
+  if (w._done) return;
+  w._done = true; app.localDone++;
+  send({ t: 'task' });
+  w.classList.add('ok'); w.innerHTML = '';
+  w.append(el('div', 'done', '✔ Mission accomplie'));
+  setTimeout(() => { if (app.task === w){ app.task = null; render(); } }, 900);
+}
+
+/* ---------- Affichage ---------- */
+function fmt(ms){ const s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+function pname(v, id){ const p = v.players.find(x => x.id === id); return p ? p.name : '?'; }
+function roleTag(role){ return role === 'agent' ? '<span class="tag a">Gestapo</span>' : role === 'resistant' ? '<span class="tag r">Résistant</span>' : ''; }
+function statusTag(p){
+  if (p.status === 'arrested') return '<span class="tag off">Montluc</span>';
+  if (p.status === 'excluded') return '<span class="tag off">Exclu</span>';
+  if (!p.connected) return '<span class="tag off">hors ligne</span>';
+  return '';
+}
+
+const RULES = `
+<details><summary>Règles du jeu</summary>
+<p><b>Lyon, 1943.</b> La ville est la capitale de la Résistance. Un réseau prépare la libération… mais des <b>agents de la Gestapo</b> s’y sont infiltrés.</p>
+<p><b>La nuit</b> (75 s) : chacun accomplit ses missions secrètes sur son téléphone. Chaque mission des résistants fait avancer la <b>préparation de l’insurrection</b>. Les agents font semblant… et peuvent <b>saboter</b> (−8 %) et <b>dénoncer</b> un résistant, qui sera arrêté à l’aube et envoyé au fort Montluc.</p>
+<p><b>La réunion clandestine</b> : on découvre qui a été arrêté, on discute à voix haute, puis on vote pour exclure un suspect (ou passer).</p>
+<p><b>Les résistants gagnent</b> si la préparation atteint 100 % ou si tous les agents sont démasqués. <b>La Gestapo gagne</b> si les agents sont aussi nombreux que les résistants encore libres.</p>
+<p><b>Rôles spéciaux</b> (selon le nombre de joueurs) : 🩺 le <b>médecin</b> cache un joueur chaque nuit pour lui éviter l’arrestation ; 📡 l’<b>opérateur radio</b> découvre le camp d’un joueur par nuit ; ⭐ le <b>chef de réseau</b> a une voix qui compte double ; 🐀 le <b>mouchard</b> est un agent qui passe pour résistant aux écoutes.</p>
+<p class="muted">Un résistant arrêté peut encore faire passer 1 message par nuit depuis sa cellule, mais ne vote plus.</p>
+</details>`;
+
+function render(){
+  const v = app.view;
+  let h = '';
+  if (app.screen === 'home') h = renderHome();
+  else if (app.refused) h = `<h1>Ombres sur Lyon</h1><div class="card red center"><p class="err">${esc(app.refused)}</p></div><button data-act="home">Retour</button>`;
+  else if (!v) h = `<h1>Ombres sur Lyon</h1><div class="status">${esc(app.status || 'Connexion…')}</div>`;
+  else {
+    if (app.status) h += `<div class="status">${esc(app.status)}</div>`;
+    if (v.phase === 'lobby') h += renderLobby(v);
+    else {
+      h += renderTop(v);
+      if (app.roleOpen) h += renderRoleCard(v, true);
+      if (v.phase === 'mission') h += renderMission(v);
+      else if (v.phase === 'meeting') h += renderMeeting(v);
+      else if (v.phase === 'result') h += renderResult(v);
+      else if (v.phase === 'end') h += renderEnd(v);
+      if (app.mode === 'host' && (v.phase === 'mission' || v.phase === 'meeting' || v.phase === 'result'))
+        h += `<button class="link" data-act="skip">Hôte : passer à la suite ⏭</button>`;
+    }
+  }
+  $app.innerHTML = h;
+  const slot = document.getElementById('task-slot');
+  if (slot && app.task) slot.append(app.task);
+  updateTimer();
+}
+
+function renderHome(){
+  const nameInput = `<input id="name" maxlength="16" placeholder="Votre nom de code" value="${esc(myName)}" autocomplete="off">`;
+  let h = `<h1>OMBRES<br>SUR LYON</h1><div class="sub">1943 · Capitale de la Résistance</div>
+  <div class="card"><p>Un réseau de résistants prépare la libération de Lyon. Mais parmi eux se cachent des <b>agents de la Gestapo</b>… Accomplissez vos missions, débusquez les traîtres — ou trahissez sans vous faire prendre.</p></div>`;
+  if (app.error) h += `<p class="err">${esc(app.error)}</p>`;
+  if (typeof Peer === 'undefined') h += `<p class="err">Le module réseau n’a pas pu se charger. Vérifiez votre connexion puis rechargez la page.</p>`;
+  h += nameInput;
+  if (urlCode){
+    h += `<button class="primary" data-act="join">Rejoindre la partie ${esc(urlCode)}</button>
+          <button class="link" data-act="create">ou créer une nouvelle partie</button>`;
+  } else {
+    h += `<button class="primary" data-act="create">Créer une partie</button>
+          <div class="row"><input id="joincode" maxlength="4" placeholder="CODE" style="text-transform:uppercase"><button data-act="joincode" style="width:auto">Rejoindre</button></div>`;
+  }
+  h += RULES;
+  return h;
+}
+
+function renderLobby(v){
+  const isHost = app.mode === 'host';
+  const link = location.origin + location.pathname + '?partie=' + app.code;
+  let h = `<h1>Ombres sur Lyon</h1><div class="sub">Réunion du réseau</div>
+  <div class="card center"><div class="muted">Code de la partie</div><div class="code">${esc(app.code)}</div>
+  <button data-act="share">📨 Envoyer le lien aux joueurs</button><small id="sharemsg"></small></div>
+  <h2>Membres présents (${v.players.length})</h2><ul class="plist">`;
+  v.players.forEach(p => {
+    h += `<li><span>${esc(p.name)}${p.id === myId ? ' <small>(vous)</small>' : ''}</span><span>${p.id === v.hostId ? '<span class="tag">hôte</span>' : ''}</span></li>`;
+  });
+  h += `</ul>`;
+  const t = v.target, missing = t - v.players.length;
+  h += `<div class="card"><div class="top"><b>Nombre de joueurs</b>`;
+  if (isHost) h += `<div class="row" style="align-items:center;width:auto">
+      <button data-act="target" data-d="-1" style="width:48px;padding:8px" ${t <= Math.max(v.minPlayers, v.players.length) ? 'disabled' : ''}>−</button>
+      <b style="font-size:1.6rem;min-width:1.6em;text-align:center">${t}</b>
+      <button data-act="target" data-d="1" style="width:48px;padding:8px" ${t >= v.maxPlayers ? 'disabled' : ''}>+</button></div>`;
+  else h += `<b style="font-size:1.6rem">${t}</b>`;
+  h += `</div>${renderComposition(v.comp)}</div>`;
+  if (isHost) h += `<button class="primary" data-act="start" ${missing !== 0 ? 'disabled' : ''}>${missing > 0 ? `En attente de ${missing} joueur${missing > 1 ? 's' : ''}…` : 'Lancer la partie'}</button>
+    <p class="muted center"><small>Gardez cette page ouverte : votre téléphone héberge la partie.</small></p>`;
+  else h += `<p class="center">${missing > 0 ? `En attente de ${missing} joueur${missing > 1 ? 's' : ''}…` : 'En attente du lancement par l’hôte…'}</p>`;
+  h += RULES + `<small class="muted" style="display:none">${esc(link)}</small>`;
+  return h;
+}
+
+function renderTop(v){
+  const label = { mission: 'La nuit', meeting: 'Réunion clandestine', result: 'Verdict', end: 'Fin de partie' }[v.phase] || '';
+  return `<div class="top"><div><b>Nuit n°${v.round}</b><br><small>${label}</small></div>
+    <button class="chip" data-act="role">🗂️ Mon rôle</button><div class="timer" id="timer"></div></div>
+    <div class="barlbl">Préparation de l’insurrection : <b>${v.progress} %</b></div>
+    <div class="bar"><div class="fill" style="width:${Math.min(100, v.progress)}%"></div></div>`;
+}
+
+const ROLES = {
+  resistant: { ico: '☨', name: 'Résistant', team: 'r', text: 'Accomplissez vos missions pour préparer la libération de Lyon. Pendant les réunions, <b>démasquez les agents infiltrés</b>.' },
+  medecin:   { ico: '🩺', name: 'Médecin du réseau', team: 'r', text: 'Chaque nuit, <b>cachez un membre du réseau</b> (vous compris) : s’il est dénoncé, il échappe à l’arrestation. Jamais la même personne deux nuits de suite.' },
+  radio:     { ico: '📡', name: 'Opérateur radio', team: 'r', text: 'Chaque nuit, <b>interceptez les communications</b> d’un joueur pour savoir s’il travaille pour la Gestapo. Attention : le mouchard passe pour un résistant.' },
+  chef:      { ico: '⭐', name: 'Chef de réseau', team: 'r', text: 'Votre <b>voix compte double</b> lors des votes. Personne ne le sait : à vous de convaincre sans vous faire repérer.' },
+  agent:     { ico: '🕵️', name: 'Agent de la Gestapo', team: 'a', text: 'Infiltré dans le réseau : <b>sabotez</b> les préparatifs, <b>dénoncez</b> les résistants et ne vous faites pas démasquer.' },
+  mouchard:  { ico: '🐀', name: 'Mouchard', team: 'a', text: 'Agent de la Gestapo, mais vos traces sont si bien effacées que <b>l’opérateur radio vous croit résistant</b>. Sabotez, dénoncez, mentez.' }
+};
+function roleKey(p){ return p.special || p.role; }
+
+function renderComposition(c){
+  const items = [];
+  items.push(`🕵️ ${c.agents} agent${c.agents > 1 ? 's' : ''} de la Gestapo${c.mouchard ? ' (dont 1 mouchard 🐀)' : ''}`);
+  if (c.medecin) items.push('🩺 1 médecin');
+  if (c.radio) items.push('📡 1 opérateur radio');
+  if (c.chef) items.push('⭐ 1 chef de réseau');
+  items.push(`☨ ${c.simples} résistant${c.simples > 1 ? 's' : ''}`);
+  return `<ul class="plist">${items.map(i => `<li>${i}</li>`).join('')}</ul>
+    <small class="muted">${c.resistants} résistants contre ${c.agents} agent${c.agents > 1 ? 's' : ''}. ${c.n < 5 ? 'Partie courte : idéal à 5 joueurs ou plus.' : ''}</small>`;
+}
+
+function renderRoleCard(v, small){
+  const me = v.me; if (!me || !me.role) return '';
+  const R = ROLES[roleKey(me)] || ROLES[me.role];
+  let extra = '';
+  if (me.role === 'agent'){
+    const allies = v.players.filter(p => p.role === 'agent' && p.id !== myId).map(p => esc(p.name) + (p.special === 'mouchard' ? ' 🐀' : ''));
+    extra = `<p>${allies.length ? 'Vos complices : <b>' + allies.join(', ') + '</b>' : 'Vous agissez seul.'}</p>`;
+  } else extra = `<p class="muted"><small>Camp : la Résistance</small></p>`;
+  const col = R.team === 'r' ? 'style="color:var(--green);border-color:var(--green)"' : '';
+  return `<div class="rolecard ${R.team === 'a' ? 'agent' : ''}"><div class="ico">${R.ico}</div><div class="stamp" ${col}>${R.name.toUpperCase()}</div>
+    <p>${R.text}</p>${extra}
+    ${small ? '<button data-act="role">Cacher</button>' : '<button class="primary" data-act="roleok">Compris — cacher mon rôle</button>'}</div>`;
+}
+
+function renderPowers(v){
+  const me = v.me;
+  if (!me || me.status !== 'free' || !['medecin', 'radio'].includes(me.special)) return '';
+  const label = me.special === 'medecin' ? '🩺 Cacher un membre du réseau' : '📡 Écoute radio';
+  if (!app.secretOpen) return `<button class="link" data-act="secret">${label}</button>`;
+  let h = `<div class="secret" style="border-color:var(--green);background:rgba(47,93,58,.07)"><b>${label}</b><button class="link" data-act="secret" style="width:auto;float:right;padding:0">fermer</button>`;
+  const free = v.players.filter(p => p.status === 'free');
+  if (me.special === 'medecin'){
+    if (me.protect) h += `<p>🩺 <b>${esc(pname(v, me.protect))}</b> est caché(e) cette nuit.</p>`;
+    else free.forEach(p => {
+      const no = p.id === me.lastProtect;
+      h += `<button data-act="protect" data-id="${esc(p.id)}" ${no ? 'disabled' : ''}>${esc(p.name)}${p.id === myId ? ' (vous)' : ''}${no ? ' — déjà caché hier' : ''}</button>`;
+    });
+  } else {
+    if (!me.inspected) free.filter(p => p.id !== myId).forEach(p => { h += `<button data-act="inspect" data-id="${esc(p.id)}">${esc(p.name)}</button>`; });
+    else h += `<p>Écoute de la nuit effectuée.</p>`;
+    if (me.intel.length) h += `<p><b>Vos écoutes :</b></p><ul class="plist">` + me.intel.map(i =>
+      `<li><span>Nuit ${i.round} — ${esc(pname(v, i.target))}</span>${i.result === 'agent' ? '<span class="tag a">Gestapo</span>' : '<span class="tag r">Résistant</span>'}</li>`).join('') + `</ul>`;
+  }
+  return h + `</div>`;
+}
+
+function renderMission(v){
+  const me = v.me;
+  if (!me) return `<p>Vous observez la partie.</p>`;
+  if (!app.roleSeen){
+    return `<div class="card center"><p>Assurez-vous que personne ne regarde votre écran.</p></div>` + renderRoleCard(v, false);
+  }
+  let h = '';
+  if (me.status === 'arrested') h += `<div class="card red"><b>Vous avez été arrêté(e)</b> et êtes détenu(e) au fort Montluc. Vous ne votez plus, mais vous pouvez encore faire passer un message au réseau.</div>`;
+  if (me.status === 'excluded') h += `<div class="card red"><b>Vous avez été exclu(e) du réseau.</b> ${me.role === 'resistant' ? 'Vous pouvez encore aider avec un message par nuit.' : 'Observez en silence.'}</div>`;
+  const left = me.taskLimit - Math.max(me.tasksDone, app.localDone);
+  if (me.role === 'agent' && me.status === 'free') h += `<p class="muted"><small>Vos missions ne comptent pas : faites semblant pour ne pas éveiller les soupçons.</small></p>`;
+  if (left > 0){
+    if (!app.task) app.task = makeTask();
+    h += `<div class="muted">Mission ${me.taskLimit - left + 1} / ${me.taskLimit}</div><div id="task-slot"></div>`;
+  } else if (me.taskLimit > 0 || app.task){
+    if (app.task) h += `<div id="task-slot"></div>`;
+    else h += `<div class="card center"><p>✔ Vos missions de la nuit sont accomplies.</p><p class="muted">Restez discret… la réunion aura lieu à l’aube.</p></div>`;
+  }
+  if (me.role === 'agent' && me.status === 'free') h += renderSecret(v);
+  h += renderPowers(v);
+  return h;
+}
+
+function renderSecret(v){
+  const me = v.me;
+  if (!app.secretOpen) return `<button class="link" data-act="secret">📁 Dossier confidentiel</button>`;
+  let h = `<div class="secret"><b>📁 Dossier confidentiel</b><button class="link" data-act="secret" style="width:auto;float:right;padding:0">fermer</button>`;
+  h += me.sabotaged ? `<p>💥 Sabotage effectué cette nuit.</p>` : `<button class="danger" data-act="sabotage">💥 Saboter un dépôt d’armes (−8 %)</button>`;
+  if (me.arrest){
+    h += `<p>🚨 <b>${esc(pname(v, me.arrest.target))}</b> sera arrêté(e) à l’aube${me.arrest.by === myId ? '' : ' (dénoncé par ' + esc(pname(v, me.arrest.by)) + ')'}.</p>`;
+  } else {
+    const targets = v.players.filter(p => p.status === 'free' && p.role !== 'agent' && p.id !== myId);
+    h += `<p><b>Dénoncer un résistant</b> <small class="muted">(1 par nuit pour toute la Gestapo)</small></p>`;
+    targets.forEach(p => { h += `<button data-act="denounce" data-id="${esc(p.id)}">${esc(p.name)}</button>`; });
+  }
+  return h + `</div>`;
+}
+
+function renderMeeting(v){
+  const r = v.report || {};
+  let h = `<div class="card red">`;
+  h += r.arrested ? `<p>🚨 <b>${esc(pname(v, r.arrested))}</b> a été arrêté(e) par la Gestapo cette nuit et conduit(e) au fort Montluc.</p>`
+     : r.foiled ? `<p>🩺 La Gestapo a frappé… mais le médecin avait caché sa cible à temps. Personne n’a été arrêté.</p>`
+     : `<p>Personne n’a été arrêté cette nuit.</p>`;
+  if (r.sabotages) h += `<p>💥 Sabotage ! ${r.sabotages > 1 ? r.sabotages + ' dépôts d’armes ont été découverts' : 'Un dépôt d’armes a été découvert'}.</p>`;
+  h += `<p class="muted">Progression de la nuit : ${r.delta >= 0 ? '+' : ''}${r.delta} %</p></div>`;
+  const free = v.players.filter(p => p.status === 'free');
+  const voted = free.filter(p => p.voted).length;
+  h += `<h2>Qui est le traître ?</h2><p class="muted">Discutez à voix haute, puis votez. Votes : ${voted} / ${free.length}</p>`;
+  if (v.me && v.me.status === 'free'){
+    free.filter(p => p.id !== myId).forEach(p => {
+      h += `<button class="${v.me.vote === p.id ? 'sel' : ''}" data-act="vote" data-id="${esc(p.id)}">${esc(p.name)} ${p.voted ? '✉️' : ''}</button>`;
+    });
+    h += `<button class="${v.me.vote === 'skip' ? 'sel' : ''}" data-act="vote" data-id="skip">Ne pas voter (passer)</button>`;
+    if (v.me.vote) h += `<p class="center muted">Vote enregistré — vous pouvez encore changer d’avis.</p>`;
+    if (v.me.special === 'chef') h += `<p class="center muted"><small>⭐ Votre voix compte double.</small></p>`;
+  } else {
+    h += `<p>Vous ne pouvez plus voter.</p><ul class="plist">` + free.map(p => `<li>${esc(p.name)}<span>${p.voted ? '✉️' : ''}</span></li>`).join('') + `</ul>`;
+  }
+  return h;
+}
+
+function renderVerdict(v){
+  const res = v.result; if (!res) return '';
+  let h = '';
+  if (res.excluded){
+    const isA = res.excluded.role === 'agent';
+    h += `<div class="banner ${isA ? 'a' : 'r'}">${esc(pname(v, res.excluded.id))} est exclu(e) du réseau…<br><small>${isA ? 'C’était un agent de la Gestapo !' : 'C’était un(e) résistant(e) innocent(e).'}</small></div>`;
+  } else h += `<div class="banner">Pas de majorité : personne n’est exclu.</div>`;
+  const rows = Object.entries(res.tally || {}).sort((a, b) => b[1] - a[1]);
+  if (rows.length) h += `<ul class="plist">` + rows.map(([t, n]) => `<li><span>${t === 'skip' ? 'Passer' : esc(pname(v, t))}</span><span>${n} voix</span></li>`).join('') + `</ul>`;
+  return h;
+}
+function renderResult(v){ return renderVerdict(v) + `<p class="center muted">La nuit tombe à nouveau…</p>`; }
+
+function renderEnd(v){
+  const r = v.winner === 'resistance';
+  const why = { progress: 'Les préparatifs sont achevés : Lyon se soulève !', agents: 'Tous les agents infiltrés ont été démasqués.', numbers: 'La Gestapo a démantelé le réseau.' }[v.winReason] || '';
+  let h = renderVerdict(v);
+  h += `<div class="banner ${r ? 'r' : 'a'}">${r ? '☨ Victoire de la Résistance' : '🕵️ Victoire de la Gestapo'}<br><small>${why}</small></div>`;
+  h += `<h2>Les rôles</h2><ul class="plist">` + v.players.map(p => {
+    const R = ROLES[roleKey(p)];
+    return `<li><span class="${p.status !== 'free' ? 'gone' : ''}">${esc(p.name)}</span><span>${R && p.special ? R.ico + ' ' : ''}${roleTag(p.role)} ${statusTag(p)}</span></li>`;
+  }).join('') + `</ul>`;
+  h += app.mode === 'host' ? `<button class="primary" data-act="again">Nouvelle partie</button>` : `<p class="center muted">L’hôte peut relancer une nouvelle partie.</p>`;
+  return h;
+}
+
+function updateTimer(){
+  const t = document.getElementById('timer'); if (!t) return;
+  const v = app.view;
+  if (!v || !v.endsIn){ t.textContent = ''; return; }
+  const rem = Math.max(0, v.endsIn - (Date.now() - app.viewAt));
+  t.textContent = fmt(rem);
+  t.style.color = rem < 10000 ? 'var(--red)' : '';
+}
+
+/* ---------- Actions ---------- */
+function readName(){
+  const i = document.getElementById('name');
+  const n = cleanName(i ? i.value : myName);
+  if (!n){ app.error = 'Choisissez d’abord un nom de code.'; render(); return null; }
+  myName = n; S.set('ol_name', n); app.error = '';
+  return n;
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const a = b.dataset.act, id = b.dataset.id;
+  if (a === 'create'){ if (typeof Peer === 'undefined' || !readName()) return; history.replaceState(null, '', location.pathname); hostCreate(genCode()); keepAwake(); }
+  else if (a === 'join'){ if (typeof Peer === 'undefined' || !readName()) return; clientJoin(urlCode); keepAwake(); }
+  else if (a === 'joincode'){
+    const c = (document.getElementById('joincode').value || '').toUpperCase().replace(/[^A-Z]/g, '');
+    if (c.length !== 4){ app.error = 'Le code fait 4 lettres.'; render(); return; }
+    if (typeof Peer === 'undefined' || !readName()) return;
+    history.replaceState(null, '', '?partie=' + c); clientJoin(c); keepAwake();
+  }
+  else if (a === 'home'){ cleanupPeer(); app.refused = null; app.view = null; app.screen = 'home'; app.mode = null; render(); }
+  else if (a === 'share') share();
+  else if (a === 'start' || a === 'skip' || a === 'again') hostCmd(a);
+  else if (a === 'target') hostCmd('target', (app.view ? app.view.target : 6) + Number(b.dataset.d));
+  else if (a === 'protect') send({ t: 'protect', target: id });
+  else if (a === 'inspect') send({ t: 'inspect', target: id });
+  else if (a === 'roleok'){ app.roleSeen = true; render(); }
+  else if (a === 'role'){ app.roleOpen = !app.roleOpen; render(); }
+  else if (a === 'secret'){ app.secretOpen = !app.secretOpen; render(); }
+  else if (a === 'sabotage') send({ t: 'sabotage' });
+  else if (a === 'denounce') send({ t: 'denounce', target: id });
+  else if (a === 'vote') send({ t: 'vote', target: id });
+});
+
+async function share(){
+  const link = location.origin + location.pathname + '?partie=' + app.code;
+  const msg = document.getElementById('sharemsg');
+  try {
+    if (navigator.share){ await navigator.share({ title: 'Ombres sur Lyon', text: 'Rejoins le réseau ! Code ' + app.code, url: link }); return; }
+    await navigator.clipboard.writeText(link);
+    if (msg) msg.textContent = 'Lien copié !';
+  } catch(e){ if (msg) msg.textContent = link; }
+}
+
+let wakeLock = null;
+async function keepAwake(){ try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch(e){} }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && app.mode) keepAwake(); });
+
+setInterval(() => {
+  if (app.mode === 'host' && app.G && tick(app.G, Date.now())) sync();
+  updateTimer();
+}, 250);
+// L'hôte renvoie l'état complet régulièrement (sécurité si un message se perd)
+setInterval(() => { if (app.mode === 'host' && app.G) sync(); }, 5000);
+
+/* ---------- Démarrage ---------- */
+(function boot(){
+  if (urlCode && S.get('ol_hostcode') === urlCode && myName && typeof Peer !== 'undefined'){
+    let saved = null;
+    try { saved = JSON.parse(S.get('ol_game_' + urlCode)); } catch(e){}
+    if (saved && saved.players){ hostCreate(urlCode, saved); return; }
+  }
+  render();
+})();
+</script>
+</body>
+</html>
